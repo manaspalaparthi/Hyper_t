@@ -1,5 +1,7 @@
 numpy
 pandas
-libjpeg
-subprocess
-re
+seaborn
+pytesseract
+matplotlib
+opencv-python
+pylibjpeg-libjpeg
