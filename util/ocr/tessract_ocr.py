@@ -35,40 +35,48 @@ def extract_angle_confidence(result_dict):
     return (temp, confidence)
 
 
-cap = cv2.VideoCapture('../../HYP_T_Data_Files/HYP_T_12/Low_Res_Thermal_Camera/20221028T105933.MP4')
-tesseract_config = r'--oem 3 --psm 13'
-# img = load_frame(0,cap)
-# img = preprocess_frame(img)
-# result_dict = pytesseract.image_to_data(img, config = tesseract_config, output_type = pytesseract.Output.DICT)
+#main function
 
-angles = []
-confidences = []
-frames = []
+if __name__ == "__main__":
 
-count = 1
-while cap.isOpened():
-    res, frame = cap.read()
-    if res == True:
-        count =count +1
-        img = preprocess_frame(frame)
-        result_dict = pytesseract.image_to_data(img, config=tesseract_config, output_type=pytesseract.Output.DICT)
-        angle, confidence = extract_angle_confidence(result_dict)
-        print(f"temp {angle}")
-        frames.append(count)
-        angles.append(angle)
-        confidences.append(confidence)
-        # Press Q on keyboard to exit
-        cv2.imshow('Frame', frame)
-        cv2.imshow('"temp', img)
-        if cv2.waitKey(5) & 0xFF == ord('q'):
+    file_name = "20221028T115612"
+
+    location = "../../HYP_T_Data_Files/HYP_T_12/Low_Res_Thermal_Camera/"
+
+    cap = cv2.VideoCapture(location + file_name + ".MP4")
+    tesseract_config = r'--oem 3 --psm 13'
+    # img = load_frame(0,cap)
+    # img = preprocess_frame(img)
+    # result_dict = pytesseract.image_to_data(img, config = tesseract_config, output_type = pytesseract.Output.DICT)
+
+    angles = []
+    confidences = []
+    frames = []
+
+    count = 1
+    while cap.isOpened():
+        res, frame = cap.read()
+        if res == True:
+            count =count +1
+            img = preprocess_frame(frame)
+            result_dict = pytesseract.image_to_data(img, config=tesseract_config, output_type=pytesseract.Output.DICT)
+            angle, confidence = extract_angle_confidence(result_dict)
+            print(f"temp {angle}")
+            frames.append(count)
+            angles.append(angle)
+            confidences.append(confidence)
+            # Press Q on keyboard to exit
+            cv2.imshow('Frame', frame)
+            cv2.imshow('"temp', img)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                cv2.destroyAllWindows()
+                break
+        else:
             cv2.destroyAllWindows()
             break
-    else:
-        cv2.destroyAllWindows()
-        break
 
-dict = {"frame_number": frames,"temp": angles}
+    dict = {"frame_number": frames,"temp": angles}
 
-df = pd.DataFrame(dict)
+    df = pd.DataFrame(dict)
 
-df.to_csv('20221028T105933.csv')
+    df.to_csv(location+file_name+".csv")
