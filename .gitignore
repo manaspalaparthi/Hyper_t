@@ -12,6 +12,8 @@ env
 .idea
 .DS_store
 
+eye_classification/data
+
 
 # Distribution / packaging
 .Python

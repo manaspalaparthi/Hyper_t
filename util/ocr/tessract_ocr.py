@@ -5,7 +5,9 @@ import seaborn as sns
 import pandas as pd
 import pytesseract
 import re
+import tensorflow as tf
 import datetime
+from eye_classification.preprocessing import center_image ,resize_image
 
 plt.rcParams['figure.figsize'] = [10, 10]
 
@@ -39,6 +41,8 @@ def extract_angle_confidence(result_dict):
 
 if __name__ == "__main__":
 
+    label_dict = {0.0: 'right', 1.0: 'left'}
+
     file_name = "20221028T115612"
 
     location = "../../HYP_T_Data_Files/HYP_T_12/Low_Res_Thermal_Camera/"
@@ -49,9 +53,15 @@ if __name__ == "__main__":
     # img = preprocess_frame(img)
     # result_dict = pytesseract.image_to_data(img, config = tesseract_config, output_type = pytesseract.Output.DICT)
 
+    # load eye_classification saved model
+    model = tf.keras.models.load_model("../../eye_classification/eye_classification_model")
+
+
+
     angles = []
     confidences = []
     frames = []
+    labels = []
 
     count = 1
     while cap.isOpened():
@@ -60,14 +70,28 @@ if __name__ == "__main__":
             count =count +1
             img = preprocess_frame(frame)
             result_dict = pytesseract.image_to_data(img, config=tesseract_config, output_type=pytesseract.Output.DICT)
+
+            img = center_image(frame)
+            # resize image
+            img = resize_image(img)
+
+            #classify
+            img = np.expand_dims(img, axis=0)
+
+            prediction = model.predict(img)
+
+            #add label to prediction
+
+            prediction = label_dict[prediction[0][0]]
+            print(f"prediction {prediction}")
+
             angle, confidence = extract_angle_confidence(result_dict)
             print(f"temp {angle}")
             frames.append(count)
             angles.append(angle)
-            confidences.append(confidence)
-            # Press Q on keyboard to exit
+            labels.append(prediction)
+
             cv2.imshow('Frame', frame)
-            cv2.imshow('"temp', img)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 cv2.destroyAllWindows()
                 break
@@ -75,7 +99,7 @@ if __name__ == "__main__":
             cv2.destroyAllWindows()
             break
 
-    dict = {"frame_number": frames,"temp": angles}
+    dict = {"frame_number": frames,"temp": angles, "side": labels}
 
     df = pd.DataFrame(dict)
 
