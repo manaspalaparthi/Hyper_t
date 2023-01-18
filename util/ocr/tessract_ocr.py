@@ -65,6 +65,8 @@ if __name__ == "__main__":
 
     count = 1
     while cap.isOpened():
+
+        #frame rate is 8.fps
         res, frame = cap.read()
         if res == True:
             count =count +1
