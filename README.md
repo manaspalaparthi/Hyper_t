@@ -1,5 +1,13 @@
 # Hyper T
 
+
+## Introduction
+
+Aim 1: Determine whether a high-sensitivity thermal imaging system can detect a stress response through measuring changes in corneal temperature, 
+
+Aim 2: In parallel assess whether a low resolution (and low cost) thermal imaging device will be sufficiently sensitive to detect the same changes in corneal temperature.
+
+
 The repository contains the code for processing raw data for the project Project Hyper T.
 
 Project has 4 categories of data:
