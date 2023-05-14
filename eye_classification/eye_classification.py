@@ -46,12 +46,17 @@ def define_model():
     model.add(MaxPooling2D((2, 2)))
     model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_uniform', padding='same'))
     model.add(MaxPooling2D((2, 2)))
+    model.add(Dropout(0.3))
     model.add(Flatten())
     model.add(Dense(128, activation='relu', kernel_initializer='he_uniform'))
-    model.add(Dense(1, activation='sigmoid'))
+
+    # multiclass
+    model.add(Dense(3, activation='softmax'))
     # compile model
     opt = SGD(learning_rate=0.0001, momentum=0.9)
-    model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+
+    # loss = categorical_crossentropy for multiclass
+    model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy'])
     return model
 
 
@@ -87,18 +92,27 @@ def run_test_harness():
     train_datagen = ImageDataGenerator(rescale=1.0 / 255.0)
     test_datagen = ImageDataGenerator(rescale=1.0 / 255.0)
 
-    # prepare iterators
-    train_it = train_datagen.flow_from_directory('train_400/', class_mode='binary', batch_size=64, target_size=(200, 200))
-    test_it = test_datagen.flow_from_directory('test_400/', class_mode='binary', batch_size=64, target_size=(200, 200))
+    # prepare iterators class mode 3 for multiclass and one hot encoding label
+    # train_it = train_datagen.flow_from_directory('highres_data/train/', class_mode= 'categorical', batch_size=64, target_size=(200, 200))
+    # test_it = test_datagen.flow_from_directory('highres_data/test/', class_mode='categorical', batch_size=1, target_size=(200, 200))
+
+    train_it = train_datagen.flow_from_directory('highres_data/train/', class_mode='categorical', batch_size=64, target_size=(200, 200))
+    test_it = test_datagen.flow_from_directory('highres_data/test/', class_mode='categorical', batch_size=1, target_size=(200, 200))
+
+    print(train_it.class_indices)
+
+    #print shape of the train image and label
+
+
 
     # fit model
     model.fit(train_it, steps_per_epoch=len(train_it),
-                                  validation_data=test_it, validation_steps=len(test_it), epochs=8, verbose=0, callbacks=[tensorboard_callback,es])
+                                  validation_data=test_it, validation_steps=len(test_it), epochs=17, verbose=0, callbacks=[tensorboard_callback,es])
     # evaluate model
     _, acc = model.evaluate(test_it, steps=len(test_it), verbose=0)
 
     # save model as pb
-    model.save("eye_classification_model")
+    model.save("eye_classification_model_high_res5")
     print('> %.3f' % (acc * 100.0))
     # learning curves
     #summarize_diagnostics(history)

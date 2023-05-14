@@ -9,10 +9,12 @@ __pycache__/
 # data and env folders
 HYP_T_Data_Files
 env
+env3.8
 .idea
 .DS_store
 
-eye_classification/data
+eye_classification/low_res_data
+eye_classification/highres_data
 
 
 # Distribution / packaging

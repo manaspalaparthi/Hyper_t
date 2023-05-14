@@ -54,9 +54,7 @@ if __name__ == "__main__":
     # result_dict = pytesseract.image_to_data(img, config = tesseract_config, output_type = pytesseract.Output.DICT)
 
     # load eye_classification saved model
-    model = tf.keras.models.load_model("../../eye_classification/eye_classification_model")
-
-
+    model = tf.keras.models.load_model("../../eye_classification/eye_classification_model2")
 
     angles = []
     confidences = []
@@ -80,12 +78,15 @@ if __name__ == "__main__":
             #classify
             img = np.expand_dims(img, axis=0)
 
+            print("image shape", img.shape)
+
             prediction = model.predict(img)
 
             #add label to prediction
+            print(f"prediction {prediction}")
 
             prediction = label_dict[prediction[0][0]]
-            print(f"prediction {prediction}")
+
 
             angle, confidence = extract_angle_confidence(result_dict)
             print(f"temp {angle}")
