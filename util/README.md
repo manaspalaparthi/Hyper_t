@@ -14,9 +14,9 @@ The process for High resoluction and low resolution data is the same, the only d
   
 - The script does the following:
 
-the main loop reads all the participants as a list, each participant has a list of videos files as who in the structure
+the main loop reads all the participants as a list, each participant has a list of videos files as shown in the structure
 
-folder structure:
+Folder structure:
 
 ```
 ├── data
