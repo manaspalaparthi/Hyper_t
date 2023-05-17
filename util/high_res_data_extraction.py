@@ -46,23 +46,22 @@ if __name__ == "__main__":
 
     tesseract_config = r'--oem 3 --psm 13'
 
-    location = "../HYP_T_Data_Files/OneDrive_2023-01-15 (1)/All participants/High Res Thermal Camera/video_files/"
+    # location of the folder that containes all the participant videos.
+    data_location = "../HYP_T_Data_Files/OneDrive_2023-01-15 (1)/All participants/High Res Thermal Camera/video_files/"
 
+    # load model for classification
     model = tf.keras.models.load_model("../eye_classification/eye_classification_model_high_res4")
 
     # all the folders in the location end with "_"
-
-    folders = [folder for folder in os.listdir(location) if folder.endswith("_")]
-
-    # folders end with "_"
+    folders = [folder for folder in os.listdir(data_location) if folder.endswith("_")]
 
     for folder in folders:
         print("participent name = ", folder)
         # all the videos in the folder end with .MP4
-        videos = [video for video in os.listdir(location + "/" + folder) if video.endswith(".avi")]
+        videos = [video for video in os.listdir(data_location + "/" + folder) if video.endswith(".avi")]
         for video in videos:
             print("video file name = ", video)
-            cap = cv2.VideoCapture(location + "/" + folder + "/" + video)
+            cap = cv2.VideoCapture(data_location + "/" + folder + "/" + video)
 
             angles = []
             confidences = []
@@ -124,7 +123,7 @@ if __name__ == "__main__":
             cv2.destroyAllWindows()
 
             df = pd.DataFrame({"frame_number": frames, "temp": angles, "confidence": confidences, "eye_side": labels})
-            df.to_csv(location + "/" + folder + "/" + video + ".csv", index=False)
-            print("file saved", location + "/" + folder + "/" + video + ".csv")
+            df.to_csv(data_location + "/" + folder + "/" + video + ".csv", index=False)
+            print("file saved", data_location + "/" + folder + "/" + video + ".csv")
             cap.release()
             cv2.destroyAllWindows()
